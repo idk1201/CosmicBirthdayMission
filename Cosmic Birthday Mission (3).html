@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Cosmic Birthday Mission</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #050816;
+            --text: #eef1ff;
+            --muted: #9aa5d8;
+            --accent: #ffd34d;
+            --accent2: #6fe3ff;
+            --pink: #ff6fd8;
+            --card: rgba(18, 22, 58, 0.72);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 20% 10%, #1b1450 0, var(--bg) 55%);
+            color: var(--text);
+            font-family: "Trebuchet MS", system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            background: rgba(5, 8, 22, 0.75);
+            backdrop-filter: blur(8px);
+        }
+
+        nav a,
+        button {
+            font: inherit;
+            color: var(--text);
+            background: rgba(111, 227, 255, 0.12);
+            border: 1px solid rgba(111, 227, 255, 0.4);
+            border-radius: 999px;
+            padding: 8px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        nav a:hover,
+        button:hover {
+            background: rgba(111, 227, 255, 0.3);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        nav a.on {
+            background: var(--accent);
+            color: #1a1230;
+            border-color: var(--accent);
+            font-weight: bold;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            display: none;
+            animation: in 0.7s ease both;
+            text-align: center;
+        }
+
+        section.on {
+            display: block;
+        }
+
+        @keyframes in {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        h1 {
+            font-size: clamp(2rem, 7vw, 3.8rem);
+            margin: 10px 0;
+            background: linear-gradient(90deg,
+                    var(--accent),
+                    var(--pink),
+                    var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200%;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% 0;
+            }
+        }
+
+        h2 {
+            color: var(--accent2);
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 16px auto;
+            max-width: 620px;
+            box-shadow: 0 0 40px rgba(111, 227, 255, 0.08);
+        }
+
+        input {
+            font: inherit;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--accent2);
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text);
+            text-align: center;
+            margin: 6px;
+        }
+
+        .float {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            50% {
+                transform: translateY(-18px) rotate(3deg);
+            }
+        }
+
+        .ufo {
+            animation: fly 9s ease-in-out infinite alternate;
+        }
+
+        @keyframes fly {
+            from {
+                transform: translateX(-70px) rotate(-6deg);
+            }
+
+            to {
+                transform: translateX(70px) rotate(6deg);
+            }
+        }
+
+        .planet {
+            animation: spin 30s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+        }
+
+        .alien {
+            cursor: pointer;
+            background: var(--card);
+            border-radius: 18px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: 0.25s;
+        }
+
+        .alien:hover {
+            transform: translateY(-8px) rotate(-3deg);
+            border-color: var(--accent);
+        }
+
+        .alien:hover svg {
+            animation: wiggle 0.4s infinite;
+        }
+
+        @keyframes wiggle {
+            50% {
+                transform: rotate(8deg);
+            }
+        }
+
+        #msg {
+            min-height: 3em;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        #arena {
+            position: relative;
+            height: 340px;
+            border: 2px dashed rgba(111, 227, 255, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .target {
+            position: absolute;
+            width: 70px;
+            cursor: crosshair;
+            animation: pop 0.3s ease both;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .stat {
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        #cake {
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .flame {
+            cursor: pointer;
+            transition: 0.3s;
+            transform-origin: center bottom;
+        }
+
+        .flame.lit {
+            animation: flick 0.25s infinite alternate;
+        }
+
+        .flame.out {
+            opacity: 0;
+        }
+
+        @keyframes flick {
+            to {
+                transform: scale(1.2, 0.9);
+            }
+        }
+
+        #fw {
+            position: fixed;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #mute {
+            position: fixed;
+            right: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            z-index: 6;
+        }
+
+        body.romance {
+            background: radial-gradient(ellipse at 50% 30%, #5a1040 0, #1a0620 65%);
+        }
+
+        #hearts {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            animation: rise linear forwards;
+        }
+
+        @keyframes rise {
+            to {
+                transform: translateY(-115vh) rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        .stage {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 10px auto;
+        }
+
+        .stage .orbit {
+            position: absolute;
+            inset: 0;
+            animation: spin 14s linear infinite;
+        }
+
+        .stage .orbit span {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -14px;
+            font-size: 1.7rem;
+        }
+
+        .bigheart {
+            position: absolute;
+            inset: 55px 50px;
+            width: 140px;
+            height: 126px;
+            filter: drop-shadow(0 0 18px #ff4f8b);
+            animation: beat 1.4s infinite;
+        }
+
+        @keyframes beat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.2);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.12);
+            }
+        }
+
+        .fade {
+            opacity: 0;
+            animation: in 1.4s ease forwards;
+        }
+
+        #love h1 {
+            background: linear-gradient(90deg, #ff9ac1, #ffd6e8, #ff6fd8);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        #love p {
+            color: #ffd6e8;
+            font-size: 1.15rem;
+        }
+
+        button:active {
+            transform: scale(0.9) rotate(-3deg);
+        }
+
+        .pop {
+            position: fixed;
+            z-index: 9;
+            pointer-events: none;
+            font-size: 28px;
+            animation: burst 1s ease-out forwards;
+        }
+
+        @keyframes burst {
+            to {
+                transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(0.4);
+                opacity: 0;
+            }
+        }
+
+        .spin {
+            animation: cartwheel 0.8s ease !important;
+        }
+
+        @keyframes cartwheel {
+            to {
+                transform: rotate(360deg) scale(1.25);
+            }
+        }
+
+        .zap {
+            position: absolute;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            animation: zap 0.7s ease-out forwards;
+        }
+
+        @keyframes zap {
+            to {
+                transform: translateY(-50px) scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        .gold {
+            filter: drop-shadow(0 0 10px #ffd34d);
+        }
+
+        .jiggle {
+            animation: jig 1.2s ease-in-out infinite;
+        }
+
+        @keyframes jig {
+            25% {
+                transform: rotate(-8deg);
+            }
+
+            75% {
+                transform: rotate(8deg);
+            }
+        }
+
+        .fgrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin: 16px 0;
+        }
+
+        .fc {
+            perspective: 900px;
+            height: 210px;
+            cursor: pointer;
+        }
+
+        .fi {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+
+        .fc.flip .fi {
+            transform: rotateY(180deg);
+        }
+
+        .fc:not(.flip):hover .fi {
+            transform: rotateY(12deg) scale(1.05);
+        }
+
+        .ff,
+        .fb {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .ff {
+            background: var(--card);
+        }
+
+        .ff b {
+            font-size: 2.8rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .fb {
+            background: linear-gradient(135deg, #2a1b6e, #7a2a9f);
+            transform: rotateY(180deg);
+            font-size: 0.92rem;
+            line-height: 1.45;
+            color: #fff;
+        }
+
+        .bar {
+            height: 12px;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+            max-width: 420px;
+            margin: 10px auto;
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg,
+                    var(--accent2),
+                    var(--pink),
+                    var(--accent));
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="stars"></canvas><canvas id="fw"></canvas>
+    <nav id="nav">
+        <a href="#home">🚀 Launch</a><a href="#aliens">👽 Aliens</a><a href="#facts">🔭 Facts</a><a href="#game">🎯
+            Catch</a><a href="#wish">🎂 Wish</a>
+    </nav>
+    <button id="mute" aria-label="Toggle sound">🔊</button>
+    <main>
+        <section id="home">
+            <div class="ufo" id="ufo" style="cursor:pointer"><svg width="160" height="90" viewBox="0 0 160 90">
+                    <ellipse cx="80" cy="45" rx="70" ry="20" fill="#9aa5d8" />
+                    <ellipse cx="80" cy="35" rx="34" ry="28" fill="#6fe3ff" opacity=".7" />
+                    <circle cx="80" cy="30" r="9" fill="#7dff9a" />
+                    <circle cx="35" cy="48" r="5" fill="#ffd34d" />
+                    <circle cx="80" cy="53" r="5" fill="#ff6fd8" />
+                    <circle cx="125" cy="48" r="5" fill="#ffd34d" />
+                </svg></div>
+            <h1 id="title">Happy Birthday, Star!</h1>
+            <p>🚨 Mission control reports dangerously high levels of fun, cake and aliens ahead! Tap the UFO, it’s
+                ticklish. 🛸</p>
+            <h2>Are you ready to begin your trip into space?</h2>
+            <button id="go">Yes, let’s go! 🚀</button>
+            <button id="no">Not yet…</button>
+            <div id="count" style="min-height:2.4em;margin-top:12px;font-size:1.6rem;color:var(--accent)"></div>
+            <div class="card"><span class="planet"><svg width="110" height="110" viewBox="0 0 110 110">
+                        <circle cx="55" cy="55" r="34" fill="#ff8a5c" />
+                        <path d="M25 50q30 14 60 0M24 64q30 12 62 0" stroke="#ffd0a8" stroke-width="5" fill="none"
+                            opacity=".7" />
+                        <ellipse cx="55" cy="55" rx="52" ry="11" fill="none" stroke="#ffd34d" stroke-width="3"
+                            transform="rotate(-20 55 55)" />
+                    </svg></span>
+                <p>Planet Birthday is 100% cake. Population: You. Gravity: extra sprinkles. 🧁 Tap anywhere for space
+                    confetti!</p>
+            </div>
+        </section>
+
+        <section id="aliens">
+            <h1>Meet the Alien Crew</h1>
+            <p>These four weirdos flew 40 million light-years just for your party. Poke them! (They don’t mind. Mostly.)
+            </p>
+            <div class="grid" id="grid"></div>
+            <div class="card" id="msg">Waiting for transmission…</div>
+        </section>
+
+        <section id="facts">
+            <h1>Cosmic Fun Facts</h1>
+            <p>19 mind-blowing facts are hiding behind these cards. Tap to flip, and collect them all!</p>
+            <div class="stat">Discovered: <span id="fcount">0</span>/19</div>
+            <div class="bar"><i id="fbar"></i></div>
+            <p id="fdone" style="min-height:1.5em;color:var(--accent)"></p>
+            <button id="fsurprise">🎲 Surprise me!</button>
+            <div class="fgrid" id="fgrid"></div>
+            <div class="card">
+                <h2>⚖️ Weigh yourself in space</h2>
+                <p>How heavy would you feel on other worlds?</p><input id="kg" type="number" min="1" max="500"
+                    placeholder="Your weight in kg"><button id="wbtn">Weigh me!</button>
+                <div id="wout" class="stat" style="font-size:1rem;line-height:1.8"></div>
+            </div>
+        </section>
+
+        <section id="game">
+            <h1>Alien Catcher</h1>
+            <p>Catch as many aliens as you can in 20 seconds!</p>
+            <div class="stat">Score: <span id="score">0</span> · Time: <span id="time">20</span>s</div>
+            <button id="start">Start Mission</button>
+            <div id="arena"></div>
+            <p id="result"></p>
+        </section>
+
+        <section id="wish">
+            <h1>Make a Wish</h1>
+            <p>Tap each candle to light it. Warning: wishes made at this altitude come true 137% faster. 🎂</p>
+            <svg id="cake" class="float" viewBox="0 0 300 260">
+                <rect x="40" y="150" width="220" height="90" rx="14" fill="#ff6fd8" />
+                <rect x="40" y="150" width="220" height="22" rx="10" fill="#fff2fb" />
+                <rect x="70" y="105" width="160" height="55" rx="12" fill="#6fe3ff" />
+                <rect x="70" y="105" width="160" height="18" rx="9" fill="#e9fbff" />
+                <g fill="#ffd34d">
+                    <circle cx="90" cy="200" r="5" />
+                    <circle cx="150" cy="210" r="5" />
+                    <circle cx="210" cy="200" r="5" />
+                </g>
+                <g id="candles"></g>
+            </svg>
+            <div><button id="blow" disabled>Blow Out 🌬️</button></div>
+            <p id="wishmsg"></p>
+        </section>
+        <section id="love">
+            <div id="hearts"></div>
+            <audio id="song" loop preload="auto">
+                <source src="GBxLS.mp3" type="audio/mpeg">
+                Your browser does not support audio.
+            </audio>
+            <button id="playsong" style="display:none">🎵 Play</button>
+            <div class="stage">
+                <div class="orbit"><span style="transform:rotate(0deg) translateY(-110px)">✨</span><span
+                        style="transform:rotate(72deg) translateY(-110px)">⭐</span><span
+                        style="transform:rotate(144deg) translateY(-110px)">✨</span><span
+                        style="transform:rotate(216deg) translateY(-110px)">🌙</span><span
+                        style="transform:rotate(288deg) translateY(-110px)">⭐</span></div>
+                <svg class="bigheart" viewBox="0 0 100 90">
+                    <path
+                        d="M50 88C10 58 0 35 0 22 0 8 12 0 25 0c10 0 20 6 25 15C55 6 65 0 75 0c13 0 25 8 25 22 0 13-10 36-50 66z"
+                        fill="#ff4f8b" />
+                    <path d="M20 14c-6 2-10 8-9 15" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"
+                        opacity=".5" />
+                </svg>
+            </div>
+            <h1 class="fade" style="animation-delay:.3s">Happy Birthday, Starshine! </h1>
+            <p class="fade" style="animation-delay:1.3s">Today is all about the person who makes every single day
+                brighter just by being in it.</p>
+            <p class="fade" style="animation-delay:2.3s">Thank you for all the laughs (the funniest person I know),</p>
+            <p class="fade" style="animation-delay:3.3s">the late-night talks (the wisest person I know),</p>
+            <p class="fade" style="animation-delay:4.3s">and for always showing up when it matters most.</p>
+            <p class="fade" style="animation-delay:5.3s">Never change.</p>
+            <p class="fade" style="animation-delay:6.3s">Luck was on my side when our paths crossed,</p>
+            <p class="fade" style="animation-delay:7.3s">and I will always be grateful for that.</p>
+            <p class="fade" style="animation-delay:8.3s">You deserve every bit of happiness and so much more,</p>
+            <p class="fade" style="animation-delay:9.3s">so I can’t wait to see all the amazing things that 19 brings
+                you.</p>
+            <p class="fade" style="animation-delay:10.3s">Out of every galaxy and a billion burning stars,</p>
+            <p class="fade" style="animation-delay:11.3s">you are the one that makes my whole sky light up.</p>
+            <p class="fade" style="animation-delay:12.3s">Here’s to another trip around the sun and many more. 💖</p>
+            <button class="fade" style="animation-delay:15s" onclick="location.hash='#home'">Back to the stars
+                ✨</button>
+        </section>
+    </main>
+    <script>
+        (function () {
+            var $ = function (s) {
+                return document.querySelector(s);
+            };
+            var muted = false,
+                ac = null;
+            function ctx() {
+                try {
+                    if (!ac)
+                        ac = new (window.AudioContext || window.webkitAudioContext)();
+                    if (ac.state === "suspended") ac.resume();
+                } catch (e) { }
+                return ac;
+            }
+            function tone(f, d, type, vol, when) {
+                if (muted) return;
+                var a = ctx();
+                if (!a) return;
+                var t = a.currentTime + (when || 0),
+                    o = a.createOscillator(),
+                    g = a.createGain();
+                o.type = type || "sine";
+                o.frequency.setValueAtTime(f, t);
+                g.gain.setValueAtTime(vol || 0.15, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + d);
+                o.connect(g);
+                g.connect(a.destination);
+                o.start(t);
+                o.stop(t + d);
+            }
+            function sweep(f1, f2, d) {
+                if (muted) return;
+                var a = ctx();
+                if (!a) return;
+                var t = a.currentTime,
+                    o = a.createOscillator(),
+                    g = a.createGain();
+                o.type = "sawtooth";
+                o.frequency.setValueAtTime(f1, t);
+                o.frequency.exponentialRampToValueAtTime(f2, t + d);
+                g.gain.setValueAtTime(0.1, t);
+                g.gain.exponentialRampToValueAtTime(0.001, t + d);
+                o.connect(g);
+                g.connect(a.destination);
+                o.start(t);
+                o.stop(t + d);
+            }
+            function melody() {
+                var n = [
+                    [392, 0.3],
+                    [392, 0.15],
+                    [440, 0.45],
+                    [392, 0.45],
+                    [523, 0.45],
+                    [494, 0.9],
+                    [392, 0.3],
+                    [392, 0.15],
+                    [440, 0.45],
+                    [392, 0.45],
+                    [587, 0.45],
+                    [523, 0.9],
+                ],
+                    t = 0;
+                n.forEach(function (x) {
+                    tone(x[0], x[1] + 0.2, "triangle", 0.18, t);
+                    t += x[1] + 0.05;
+                });
+            }
+            $("#mute").onclick = function () {
+                muted = !muted;
+                this.textContent = muted ? "🔇" : "🔊";
+                document.getElementById('song').muted = muted;
+            };
+
+            /* routing */
+            var pages = ["home", "aliens", "facts", "game", "wish", "love"];
+            function route() {
+                var h = (location.hash || "#home").slice(1);
+                if (pages.indexOf(h) < 0) h = "home";
+                document.querySelectorAll("section").forEach(function (s) {
+                    s.classList.toggle("on", s.id === h);
+                });
+                document.querySelectorAll("nav a").forEach(function (a) {
+                    a.classList.toggle("on", a.getAttribute("href") === "#" + h);
+                });
+                document.body.classList.toggle("romance", h === "love");
+                if (h === "love") loveOn();
+                else {
+                    loveOff();
+                    tone(660, 0.15, "sine", 0.1);
+                }
+                window.scrollTo(0, 0);
+            }
+            window.addEventListener("hashchange", route);
+            route();
+            document.querySelectorAll("nav a").forEach(function (a) {
+                a.addEventListener("click", function () {
+                    ctx();
+                });
+            });
+
+            /* name */
+            var nm = "Star";
+            function setName() {
+                $("#title").textContent = "Happy Birthday, " + nm + "!";
+            }
+            setName();
+            $("#go").onclick = function () {
+                ctx();
+                var b = $("#go"),
+                    no = $("#no"),
+                    cd = $("#count"),
+                    n = 3;
+                b.disabled = true;
+                no.disabled = true;
+                cd.textContent = n;
+                tone(500, 0.2, "square", 0.1);
+                var iv = setInterval(function () {
+                    n--;
+                    if (n > 0) {
+                        cd.textContent = n;
+                        tone(500, 0.2, "square", 0.1);
+                    } else {
+                        clearInterval(iv);
+                        cd.textContent = "🚀 Blast off!";
+                        sweep(200, 1400, 0.9);
+                        boom(innerWidth / 2, innerHeight / 3);
+                        setTimeout(function () {
+                            location.hash = "#aliens";
+                            cd.textContent = "";
+                            b.disabled = false;
+                            no.disabled = false;
+                        }, 1100);
+                    }
+                }, 800);
+            };
+            var dodges = 0,
+                phr = [
+                    "Nope!",
+                    "Too slow!",
+                    "Missed me!",
+                    "Haha!",
+                    "Almost!",
+                    "Catch me!",
+                ];
+            function dodge() {
+                ctx();
+                var b = $("#no");
+                dodges++;
+                if (dodges >= 6) {
+                    b.style.transform = "none";
+                    b.textContent = "Okay, fine! 🚀";
+                    $("#count").textContent = "You can’t resist the stars, " + nm + "!";
+                    tone(660, 0.25, "triangle", 0.1);
+                    return;
+                }
+                b.style.transform =
+                    "translate(" +
+                    (Math.random() - 0.5) * 240 +
+                    "px," +
+                    (Math.random() - 0.5) * 140 +
+                    "px) rotate(" +
+                    (Math.random() - 0.5) * 40 +
+                    "deg)";
+                b.textContent = phr[dodges % phr.length];
+                tone(300 + dodges * 80, 0.12, "square", 0.07);
+                $("#count").textContent = "Ready now, " + nm + "?";
+            }
+            $("#no").addEventListener("pointerenter", function () {
+                if (dodges < 6) dodge();
+            });
+            $("#no").onclick = function () {
+                if (dodges < 6) {
+                    dodge();
+                } else {
+                    $("#go").click();
+                }
+            };
+
+            /* aliens */
+            var cols = ["#7dff9a", "#c58bff", "#ffb35c", "#6fe3ff"];
+            function alienSVG(c, eyes) {
+                var e =
+                    eyes === 3
+                        ? '<circle cx="35" cy="42" r="6" fill="#111"/><circle cx="50" cy="38" r="7" fill="#111"/><circle cx="65" cy="42" r="6" fill="#111"/>'
+                        : '<ellipse cx="38" cy="42" rx="9" ry="12" fill="#111" transform="rotate(-15 38 42)"/><ellipse cx="62" cy="42" rx="9" ry="12" fill="#111" transform="rotate(15 62 42)"/>';
+                return (
+                    '<svg viewBox="0 0 100 100" width="100%"><path d="M50 8C20 8 8 40 22 66c8 14 48 14 56 0C92 40 80 8 50 8z" fill="' +
+                    c +
+                    '"/><line x1="35" y1="10" x2="28" y2="0" stroke="' +
+                    c +
+                    '" stroke-width="3"/><line x1="65" y1="10" x2="72" y2="0" stroke="' +
+                    c +
+                    '" stroke-width="3"/><circle cx="28" cy="0" r="4" fill="#ffd34d"/><circle cx="72" cy="0" r="4" fill="#ffd34d"/>' +
+                    e +
+                    '<path d="M38 62q12 10 24 0" stroke="#111" stroke-width="3" fill="none"/><circle cx="38" cy="40" r="2" fill="#fff"/><circle cx="62" cy="40" r="2" fill="#fff"/></svg>'
+                );
+            }
+            var lines = [
+                [
+                    "Earth year complete! Bring snacks to the mothership.",
+                    "I ate the party hats. They were crunchy. Happy Birthday!",
+                    "On my planet, birthdays last 400 days. Start celebrating!",
+                ],
+                [
+                    "You are officially one orbit cooler than last year.",
+                    "I tried to blow out the sun for you. It said no.",
+                    "Beep boop, I mean, happy birthday, fellow human!",
+                ],
+                [
+                    "Our telescopes show a 100% chance of cake today.",
+                    "I have 3 eyes and all of them want a slice.",
+                    "Wiggle wiggle! That is alien for happy birthday!",
+                ],
+                [
+                    "The galaxy shines a little brighter on your day.",
+                    "I wrapped you a black hole. Do not open it.",
+                    "Fun fact: you are my favorite Earthling. Do not tell Alien.",
+                ],
+            ];
+            var names = ["Gremlin", "Alien", "Joe", "Nova"];
+            var g = $("#grid");
+            names.forEach(function (n, i) {
+                var d = document.createElement("div");
+                d.className = "alien float";
+                d.style.animationDelay = i * 0.6 + "s";
+                d.innerHTML = alienSVG(cols[i], i % 2 ? 3 : 2) + "<b>" + n + "</b>";
+                d.onclick = function () {
+                    var L = lines[i],
+                        r = d.getBoundingClientRect();
+                    $("#msg").textContent =
+                        n + " says: " + L[Math.floor(Math.random() * L.length)];
+                    d.classList.add("spin");
+                    setTimeout(function () {
+                        d.classList.remove("spin");
+                    }, 800);
+                    sweep(300 + i * 150, 900 + i * 200, 0.4);
+                    tone(880 + i * 100, 0.2, "square", 0.06, 0.3);
+                    pops(r.left + r.width / 2, r.top + 40);
+                };
+                g.appendChild(d);
+            });
+
+            /* game */
+            var score = 0,
+                left = 20,
+                run = false,
+                timer,
+                spawn;
+            function endGame() {
+                run = false;
+                clearInterval(timer);
+                clearInterval(spawn);
+                $("#arena").innerHTML = "";
+                $("#result").textContent =
+                    "Mission complete! You caught " +
+                    score +
+                    " aliens, " +
+                    nm +
+                    "! " +
+                    (score >= 20
+                        ? "Galactic legend! The aliens want your autograph! 🌟"
+                        : score >= 10
+                            ? "Great pilot! Gremlin is jealous. 🚀"
+                            : "The aliens escaped… to throw you a party! 🎈");
+                melody();
+            }
+            $("#start").onclick = function () {
+                ctx();
+                score = 0;
+                left = 20;
+                run = true;
+                $("#score").textContent = 0;
+                $("#time").textContent = 20;
+                $("#result").textContent = "";
+                $("#arena").innerHTML = "";
+                clearInterval(timer);
+                clearInterval(spawn);
+                timer = setInterval(function () {
+                    left--;
+                    $("#time").textContent = left;
+                    if (left <= 0) endGame();
+                }, 1000);
+                spawn = setInterval(function () {
+                    if (!run) return;
+                    var a = $("#arena"),
+                        t = document.createElement("div");
+                    var gold = Math.random() < 0.15;
+                    t.className = "target jiggle" + (gold ? " gold" : "");
+                    t.innerHTML = alienSVG(
+                        gold ? "#ffd34d" : cols[Math.floor(Math.random() * 4)],
+                        Math.random() > 0.5 ? 3 : 2,
+                    );
+                    t.style.left = Math.random() * (a.clientWidth - 70) + "px";
+                    t.style.top = Math.random() * (a.clientHeight - 70) + "px";
+                    t.onclick = function () {
+                        score += gold ? 3 : 1;
+                        $("#score").textContent = score;
+                        tone(gold ? 1200 : 500 + score * 30, 0.12, "square", 0.08);
+                        var z = document.createElement("div");
+                        z.className = "zap";
+                        z.textContent = gold
+                            ? "+3 GOLD!"
+                            : ["ZAP!", "BOOP!", "GOTCHA!", "POW!"][
+                            Math.floor(Math.random() * 4)
+                            ];
+                        z.style.left = t.style.left;
+                        z.style.top = t.style.top;
+                        a.appendChild(z);
+                        setTimeout(function () {
+                            z.remove();
+                        }, 700);
+                        t.remove();
+                    };
+                    a.appendChild(t);
+                    setTimeout(function () {
+                        t.remove();
+                    }, 1400);
+                }, 550);
+            };
+
+            /* wish */
+            var lit = 0,
+                cg = $("#candles"),
+                xs = [95, 125, 150, 175, 205];
+            xs.forEach(function (x) {
+                var s =
+                    '<rect x="' +
+                    (x - 4) +
+                    '" y="72" width="8" height="34" fill="#fff"/><rect x="' +
+                    (x - 4) +
+                    '" y="80" width="8" height="5" fill="#ff6fd8"/>';
+                var f = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                f.innerHTML =
+                    s +
+                    '<ellipse class="flame" cx="' +
+                    x +
+                    '" cy="64" rx="6" ry="10" fill="#ffd34d" opacity=".15"/>';
+                cg.appendChild(f);
+                var fl = f.querySelector(".flame");
+                f.style.cursor = "pointer";
+                f.onclick = function () {
+                    if (fl.classList.contains("lit")) return;
+                    fl.classList.add("lit");
+                    fl.setAttribute("opacity", "1");
+                    lit++;
+                    tone(700 + lit * 120, 0.2, "triangle", 0.12);
+                    if (lit === xs.length) {
+                        $("#blow").disabled = false;
+                        $("#wishmsg").textContent =
+                            "🔥 All lit! Wish BIG (no wishing for more wishes, the aliens checked).";
+                    }
+                };
+            });
+            $("#blow").onclick = function () {
+                var u = document.getElementById('song'); u.muted = true;
+                u.play().then(function () { u.pause(); u.muted = muted }).catch(function () { });
+                ctx();
+                document.querySelectorAll(".flame").forEach(function (f) {
+                    f.classList.remove("lit");
+                    f.classList.add("out");
+                });
+                sweep(1000, 100, 0.6);
+                melody();
+                $("#wishmsg").textContent =
+                    "Your wish is racing across the galaxy! Happy Birthday, " +
+                    nm +
+                    "! 🌟";
+                for (var i = 0; i < 6; i++)
+                    (function (i) {
+                        setTimeout(function () {
+                            boom(
+                                Math.random() * innerWidth,
+                                Math.random() * innerHeight * 0.6 + 40,
+                            );
+                        }, i * 350);
+                    })(i);
+                $("#blow").disabled = true;
+                setTimeout(function () {
+                    location.hash = "#love";
+                }, 6500);
+                setTimeout(function () {
+                    document.querySelectorAll(".flame").forEach(function (f) {
+                        f.classList.remove("out");
+                        f.setAttribute("opacity", ".15");
+                    });
+                    lit = 0;
+                }, 4500);
+            };
+
+            /* fun facts */
+            var F = [
+                [
+                    "🪐",
+                    "Longest day ever?",
+                    "A day on Venus lasts about 243 Earth days, but its year is only about 225. Its day is longer than its year!",
+                ],
+                [
+                    "☀️",
+                    "How old is sunshine?",
+                    "Sunlight takes about 8 minutes 20 seconds to reach Earth. You always see the Sun as it was 8 minutes ago.",
+                ],
+                [
+                    "🛁",
+                    "Could Saturn float?",
+                    "Saturn is less dense than water. In a big enough bathtub, it would float!",
+                ],
+                [
+                    "👣",
+                    "Moon footprints",
+                    "The Moon has no wind or rain, so Apollo astronauts’ footprints could last for millions of years.",
+                ],
+                [
+                    "🏔️",
+                    "Mars is a show-off",
+                    "Olympus Mons on Mars is about 22 km high, roughly 2.5 times taller than Mount Everest.",
+                ],
+                [
+                    "📏",
+                    "Space makes you taller",
+                    "Astronauts can grow a few centimetres in space as their spines stretch out. They shrink back on Earth.",
+                ],
+                [
+                    "⚡",
+                    "One heavy teaspoon",
+                    "A teaspoon of neutron star material would weigh billions of tons.",
+                ],
+                [
+                    "🏖️",
+                    "Stars vs sand",
+                    "Scientists estimate there are more stars in the universe than grains of sand on all of Earth’s beaches.",
+                ],
+                [
+                    "📻",
+                    "The Wow! signal",
+                    "In 1977 a radio telescope caught a strong 72-second signal from space. It was never explained and never repeated.",
+                ],
+                [
+                    "🚀",
+                    "Voyager’s road trip",
+                    "Voyager 1, launched in 1977, is now more than 24 billion km away, the farthest human-made object.",
+                ],
+                [
+                    "💥",
+                    "Galaxy crash",
+                    "The Milky Way and Andromeda will collide in about 4 to 5 billion years. The stars are so spread out they will mostly miss each other.",
+                ],
+                [
+                    "🎂",
+                    "Your birthday lap",
+                    "Each birthday is one trip around the Sun: about 940 million km, at around 107,000 km/h!",
+                ],
+                [
+                    "☿",
+                    "Mercury’s speedy year",
+                    "Mercury circles the Sun in just 88 Earth days, so it would have about four birthdays per Earth year!",
+                ],
+                [
+                    "🔇",
+                    "Silent space",
+                    "Space is almost silent because sound needs air to travel through, and space is nearly empty. Astronauts use radios.",
+                ],
+                [
+                    "🌞",
+                    "Giant glowing ball",
+                    "The Sun is so big that about 1.3 million Earths could fit inside it.",
+                ],
+                [
+                    "🌀",
+                    "Speedy Jupiter",
+                    "Jupiter spins once in under 10 hours, giving it the shortest day of any planet in our solar system.",
+                ],
+                [
+                    "🔥",
+                    "Hot, hotter, Venus",
+                    "Venus is hotter than Mercury even though it is farther from the Sun. Its thick atmosphere traps heat at around 465°C.",
+                ],
+                [
+                    "🌑",
+                    "The runaway Moon",
+                    "The Moon drifts about 3.8 cm farther from Earth every year, roughly as fast as your fingernails grow.",
+                ],
+                [
+                    "😢",
+                    "Tears in space",
+                    "In space, tears do not fall. They stick to your eyes and gather into a floating ball of water.",
+                ],
+            ];
+            var seen = {},
+                fg = $("#fgrid");
+            function mark() {
+                var n = Object.keys(seen).length;
+                $("#fcount").textContent = n;
+                $("#fbar").style.width = (n / F.length) * 100 + "%";
+                if (n === F.length) {
+                    melody();
+                    $("#fdone").textContent =
+                        "🏆 You found them all! Official Galactic Know-It-All!";
+                    for (var k = 0; k < 4; k++)
+                        (function (k) {
+                            setTimeout(function () {
+                                boom(
+                                    Math.random() * innerWidth,
+                                    Math.random() * innerHeight * 0.6 + 40,
+                                );
+                            }, k * 300);
+                        })(k);
+                }
+            }
+            function flipCard(i) {
+                var c = $("#fc" + i);
+                c.classList.toggle("flip");
+                tone(500 + i * 40, 0.15, "triangle", 0.1);
+                if (c.classList.contains("flip") && !seen[i]) {
+                    seen[i] = 1;
+                    mark();
+                }
+            }
+            F.forEach(function (f, i) {
+                var c = document.createElement("div");
+                c.className = "fc";
+                c.id = "fc" + i;
+                c.innerHTML =
+                    '<div class="fi"><div class="ff"><b>' +
+                    f[0] +
+                    "</b>" +
+                    f[1] +
+                    '</div><div class="fb">' +
+                    f[2] +
+                    "</div></div>";
+                c.onclick = function () {
+                    flipCard(i);
+                };
+                fg.appendChild(c);
+            });
+            $("#fsurprise").onclick = function () {
+                ctx();
+                var rest = [];
+                F.forEach(function (f, i) {
+                    if (!seen[i]) rest.push(i);
+                });
+                if (!rest.length) {
+                    $("#fdone").textContent =
+                        "You already found them all! Tap a card to re-read it. 🌟";
+                    return;
+                }
+                var i = rest[Math.floor(Math.random() * rest.length)];
+                $("#fc" + i).scrollIntoView({ behavior: "smooth", block: "center" });
+                setTimeout(function () {
+                    flipCard(i);
+                }, 500);
+            };
+            var G = [
+                ["🌕 Moon", 0.165],
+                ["☿ Mercury", 0.38],
+                ["♂️ Mars", 0.38],
+                ["♀️ Venus", 0.91],
+                ["🪐 Jupiter", 2.53],
+            ];
+            $("#wbtn").onclick = function () {
+                ctx();
+                var w = parseFloat($("#kg").value);
+                if (!(w > 0)) {
+                    $("#wout").textContent = "Enter a number first, space cadet! 🛰️";
+                    return;
+                }
+                $("#wout").innerHTML =
+                    G.map(function (g) {
+                        return g[0] + ": <b>" + (w * g[1]).toFixed(1) + " kg</b>";
+                    }).join("<br>") + "<br>Jupiter diet plan: not recommended. 🍰";
+                sweep(300, 900, 0.4);
+            };
+            /* romantic page (hidden from nav) */
+            var loveIv = null;
+            function loveOn() {
+                if (loveIv) return;
+                var s = document.getElementById('song');
+                s.currentTime = 0;   // change to e.g. 45 to start 45 seconds in
+                s.volume = 0;
+                s.muted = muted;
+                var p = s.play();
+                if (p && p.catch) p.catch(function () { document.getElementById('playsong').style.display = 'inline-block' });
+                var v = 0, fade = setInterval(function () { v += .05; s.volume = Math.min(v, .8); if (v >= .8) clearInterval(fade) }, 150);
+                loveIv = setInterval(function () {
+                    var h = document.createElement("div");
+                    h.className = "heart";
+                    h.textContent = ["💖", "💗", "💞", "✨", "❤️"][
+                        Math.floor(Math.random() * 5)
+                    ];
+                    h.style.left = Math.random() * 100 + "%";
+                    h.style.fontSize = 16 + Math.random() * 26 + "px";
+                    h.style.animationDuration = 5 + Math.random() * 4 + "s";
+                    $("#hearts").appendChild(h);
+                    setTimeout(function () {
+                        h.remove();
+                    }, 9500);
+                }, 300);
+                var START = 0, END = 24.5;   // seconds: where the song restarts, and where it cuts
+                clearInterval(window.loopIv);
+                window.loopIv = setInterval(function () {
+                    if (s.currentTime >= END) { s.currentTime = START; }
+                }, 100);
+            }
+            function loveOff() { clearInterval(loveIv); loveIv = null; $('#hearts').innerHTML = ''; document.getElementById('song').pause() };
+            document.getElementById('playsong').onclick = function () { document.getElementById('song').play(); this.style.display = 'none' }
+            /* starfield + shooting stars */
+            var c = $("#stars"),
+                x = c.getContext("2d"),
+                S = [],
+                sh = [];
+            function size() {
+                c.width = innerWidth;
+                c.height = innerHeight;
+                S = [];
+                for (var i = 0; i < 160; i++)
+                    S.push({
+                        x: Math.random() * c.width,
+                        y: Math.random() * c.height,
+                        r: Math.random() * 1.6 + 0.3,
+                        p: Math.random() * 6,
+                        s: Math.random() * 0.03 + 0.01,
+                    });
+            }
+            size();
+            addEventListener("resize", size);
+            function draw() {
+                x.clearRect(0, 0, c.width, c.height);
+                S.forEach(function (s) {
+                    s.p += s.s;
+                    x.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(s.p));
+                    x.fillStyle = "#fff";
+                    x.beginPath();
+                    x.arc(s.x, s.y, s.r, 0, 6.3);
+                    x.fill();
+                });
+                if (Math.random() < 0.01)
+                    sh.push({
+                        x: Math.random() * c.width,
+                        y: Math.random() * c.height * 0.4,
+                        l: 0,
+                    });
+                sh = sh.filter(function (q) {
+                    q.x += 9;
+                    q.y += 4;
+                    q.l++;
+                    x.globalAlpha = 1 - q.l / 40;
+                    x.strokeStyle = "#fff";
+                    x.lineWidth = 2;
+                    x.beginPath();
+                    x.moveTo(q.x, q.y);
+                    x.lineTo(q.x - 40, q.y - 18);
+                    x.stroke();
+                    return q.l < 40;
+                });
+                x.globalAlpha = 1;
+                requestAnimationFrame(draw);
+            }
+            draw();
+
+            /* fireworks */
+            var fc = $("#fw"),
+                fx = fc.getContext("2d"),
+                P = [];
+            function fsize() {
+                fc.width = innerWidth;
+                fc.height = innerHeight;
+            }
+            fsize();
+            addEventListener("resize", fsize);
+            function boom(px, py) {
+                tone(180, 0.3, "sawtooth", 0.1);
+                tone(900, 0.25, "sine", 0.08, 0.05);
+                var h = Math.random() * 360;
+                for (var i = 0; i < 60; i++) {
+                    var a = Math.random() * 6.28,
+                        v = Math.random() * 5 + 1;
+                    P.push({
+                        x: px,
+                        y: py,
+                        vx: Math.cos(a) * v,
+                        vy: Math.sin(a) * v,
+                        l: 60,
+                        h: h + Math.random() * 60,
+                    });
+                }
+            }
+            (function loop() {
+                fx.clearRect(0, 0, fc.width, fc.height);
+                P = P.filter(function (p) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.06;
+                    p.l--;
+                    fx.globalAlpha = p.l / 60;
+                    fx.fillStyle = "hsl(" + p.h + ",100%,65%)";
+                    fx.beginPath();
+                    fx.arc(p.x, p.y, 2.5, 0, 6.3);
+                    fx.fill();
+                    return p.l > 0;
+                });
+                fx.globalAlpha = 1;
+                requestAnimationFrame(loop);
+            })();
+            function pops(px, py) {
+                var em = ["🎉", "👽", "⭐", "🛸", "🎂", "🪐", "💫"];
+                for (var i = 0; i < 6; i++) {
+                    var s = document.createElement("div");
+                    s.className = "pop";
+                    s.textContent = em[Math.floor(Math.random() * em.length)];
+                    s.style.left = px + "px";
+                    s.style.top = py + "px";
+                    var a = Math.random() * 6.28,
+                        d = 50 + Math.random() * 80;
+                    s.style.setProperty("--dx", Math.cos(a) * d + "px");
+                    s.style.setProperty("--dy", Math.sin(a) * d + "px");
+                    s.style.setProperty("--r", Math.random() * 360 + "deg");
+                    document.body.appendChild(s);
+                    (function (s) {
+                        setTimeout(function () {
+                            s.remove();
+                        }, 1000);
+                    })(s);
+                }
+            }
+            document.addEventListener("click", function (e) {
+                if (e.target.closest("nav,button,input") || location.hash === "#love")
+                    return;
+                pops(e.clientX, e.clientY);
+                tone(800 + Math.random() * 500, 0.08, "sine", 0.05);
+            });
+            $("#ufo").onclick = function () {
+                ctx();
+                sweep(1200, 150, 0.7);
+                tone(220, 0.5, "sawtooth", 0.08, 0.3);
+                $("#count").textContent = "👽 Hehe! That tickles! 👽";
+            };
+        })();
+    </script>
+</body>
+
+</html>
+
+<!-- XOXO Nova_1201-->
+
+<!-- check finer details
+ remove unused code
+ remove old song from end
+ check timings
+ personlise the finer details 
+ change emojis -->
